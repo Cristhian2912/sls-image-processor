@@ -1,0 +1,41 @@
+{
+  "name": "sls-image-processor",
+  "version": "1.0.0",
+  "description": "<!-- title: 'AWS NodeJS Example' description: 'This template demonstrates how to deploy a simple NodeJS function running on AWS Lambda using the Serverless Framework.' layout: Doc framework: v4 platform: AWS language: nodeJS priority: 1 authorLink: 'https://github.com/serverless' authorName: 'Serverless, Inc.' authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4' -->",
+  "main": "handler.js",
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "deploy": "serverless deploy",
+    "offline": "serverless offline",
+    "remove": "serverless remove",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cristhian2912/sls-image-processor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cristhian2912/sls-image-processor/issues"
+  },
+  "homepage": "https://github.com/Cristhian2912/sls-image-processor#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.152",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.2.1",
+    "jest": "^30.0.5",
+    "serverless": "^4.18.0",
+    "serverless-ignore": "^0.2.1",
+    "serverless-offline": "^14.4.0",
+    "ts-jest": "^29.4.1",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.864.0",
+    "aws-sdk": "^2.1692.0",
+    "sharp": "^0.34.3"
+  }
+}

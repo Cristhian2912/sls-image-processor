@@ -1,12 +1,69 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
-org: cristhiandlcl
+org: ${env:SERVERLESS_ORG}
 # "service" is the name of this project. This will also be added to your AWS resource names.
-service: sls-image-processor
+service: ${env:SERVICE_NAME, "sls-image-processor"}
 
 provider:
   name: aws
   runtime: nodejs20.x
+  region: us-east-1
+  profile: ${env:AWS_PROFILE}
+  memorySize: 128
+  apiGateway:
+    binaryMediaTypes:
+      - "image/png"
+      - "image/jpeg"
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+          Resource: arn:aws:s3:::${env:BUCKET_NAME}/*
+  environment:
+    BUCKET_NAME: ${env:BUCKET_NAME}
+
+plugins:
+  - serverless-offline
+  - serverless-ignore
+
+layers:
+  common:
+    path: layers/common
+    name: ${self:service}-${sls:stage}-common
+    compatibleRuntimes:
+      - nodejs20.x
 
 functions:
-  hello:
-    handler: handler.hello
+  uploadImage:
+    handler: build/infrastructure/http/api-gateway/handlers/upload-image.handler
+    layers:
+      - { Ref: CommonLambdaLayer }
+    events:
+      - http:
+          path: upload
+          method: post
+          cors: true
+
+  processImage:
+    handler: build/infrastructure/http/api-gateway/handlers/process-image.handler
+    memorySize: 256
+    timeout: 20
+    layers:
+      - { Ref: CommonLambdaLayer }
+    events:
+      - s3:
+          bucket: ${self:provider.environment.BUCKET_NAME}
+          event: s3:ObjectCreated:*
+          existing: true
+          rules:
+            - prefix: images/
+            - suffix: .jpg
+      - s3:
+          bucket: ${self:provider.environment.BUCKET_NAME}
+          event: s3:ObjectCreated:*
+          existing: true
+          rules:
+            - prefix: images/
+            - suffix: .png

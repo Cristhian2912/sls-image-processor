@@ -1,0 +1,20 @@
+.git
+.gitignore
+.serverless
+.slsignore
+src/**
+tmp/**
+*.ts
+tsconfig.json
+node_modules/**
+!layer/**
+package-lock.json
+tsconfig.json
+.env
+
+# Tests
+tests/
+coverage/
+*.test.ts
+*.spec.ts
+jest.config.js

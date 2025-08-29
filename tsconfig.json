@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "verbatimModuleSyntax": false,
+    "esModuleInterop": true,
+    "target": "ES2020",
+    "outDir": "build",
+    "rootDir": "src",
+    "strict": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@domain/*": ["domain/*"],
+      "@app/*": ["application/*"],
+      "@infra/*": ["infrastructure/*"]
+    }
+  },
+  "exclude": ["tests"]
+}
