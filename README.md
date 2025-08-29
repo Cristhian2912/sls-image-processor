@@ -1,68 +1,61 @@
-<!--
-title: 'AWS NodeJS Example'
-description: 'This template demonstrates how to deploy a simple NodeJS function running on AWS Lambda using the Serverless Framework.'
-layout: Doc
-framework: v4
-platform: AWS
-language: nodeJS
-priority: 1
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, Inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Proyecto Serverless - API Upload + Evento S3
 
-# Serverless Framework AWS NodeJS Example
+Este proyecto implementa una arquitectura sin servidor utilizando [Serverless Framework v4](https://www.serverless.com/).  
+Contiene dos funcionalidades principales:
 
-This template demonstrates how to deploy a simple NodeJS function running on AWS Lambda using the Serverless Framework. The deployed function does not include any event definitions or any kind of persistence (database). For more advanced configurations check out the [examples repo](https://github.com/serverless/examples/) which include use cases like API endpoints, workers triggered by SQS, persistence with DynamoDB, and scheduled tasks. For details about configuration of specific events, please refer to our [documentation](https://www.serverless.com/framework/docs/providers/aws/events/).
+1. **API REST `/upload`** → Permite subir archivos mediante HTTP (API Gateway + Lambda).  
+2. **Evento de S3** → Reacciona automáticamente cuando se sube un archivo al bucket configurado.
 
-## Usage
+## 🚀 Requisitos
 
-### Deployment
+- [Node.js](https://nodejs.org/) = 20
+- [Serverless Framework](https://www.serverless.com/framework/docs/getting-started/)  
 
-In order to deploy the example, you need to run the following command:
+## Configuración
+
+Instalar dependencias
+
+```bash
+npm install -g serverless
+npm install
+```
+
+Instalar dependencias para la capa common de lambda
+
+```bash
+cd layers/common/nodejs
+npm install
+```
+**Nota:** Si se tiene problemas con sharp se deberia descargar las dependencias desde un centenedor temportal con la imagen de lambda y nodejs20
+
+Configurar las variables de entorno en .env
+
+```bash
+SERVERLESS_ORG="org_example"        # org de serverless v4
+SERVICE_NAME="sls-image-processor"  # nombre del servicio
+BUCKET_NAME="sls-image-processor"   # nombre del bucket para las imagenes
+AWS_PROFILE="serverless"            # perfil aws usado para los despliegues
+```
+
+## Despliegue
 
 ```
+npm run build
 serverless deploy
 ```
 
-After running deploy, you should see output similar to:
+## Uso
+
+Subir un archivo con el endpoint /upload
 
 ```
-Deploying "aws-node" to stage "dev" (us-east-1)
-
-✔ Service deployed to stack aws-node-dev (90s)
-
-functions:
-  hello: aws-node-dev-hello (1.5 kB)
+curl -X POST https://asdfjlkas.execute-api.us-east-1.amazonaws.com/dev/upload --data-binary "@aws_logo.png" -H "Content-Type: image/png"
 ```
 
-### Invocation
-
-After successful deployment, you can invoke the deployed function by using the following command:
+Una lambda reaccionará al evento s3:ObjectCreated y se procesará generando tres archivos similares a los siguientes archivos en el bucket S3
 
 ```
-serverless invoke --function hello
+optimized/webp/aws_logo.png
+optimized/avif/aws_logo.png
+optimized/png/aws_logo.png
 ```
-
-Which should result in response similar to the following:
-
-```json
-{
-  "statusCode": 200,
-  "body": "{\"message\":\"Go Serverless v4.0! Your function executed successfully!\"}"
-}
-```
-
-### Local development
-
-The easiest way to develop and test your function is to use the Serverless Framework's `dev` command:
-
-```
-serverless dev
-```
-
-This will start a local emulator of AWS Lambda and tunnel your requests to and from AWS Lambda, allowing you to interact with your function as if it were running in the cloud.
-
-Now you can invoke the function as before, but this time the function will be executed locally. Now you can develop your function locally, invoke it, and see the results immediately without having to re-deploy.
-
-When you are done developing, don't forget to run `serverless deploy` to deploy the function to the cloud.
